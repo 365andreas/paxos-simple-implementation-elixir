@@ -8,19 +8,20 @@ defmodule Master do
 
   # function showing PID of process logging a message
   def say(msg) do
-    puts Kernel.inspect(self()) <> " " <> msg
+    puts "#{Kernel.inspect(self())} " <> msg
   end
 
-  def master(n, m) do
+  def acceptorSay(msg) do
+    puts "#{Kernel.inspect(self())} : acceptor : " <> msg
+  end
 
-    # spawn counter
-    counterPid = spawn(Counter, :count, [0])
-    # :timer.sleep(1000)
 
-    # spawn n consumers
-    for _ <- 1..n do spawn(Consumer, :consume, [m, counterPid, self()]) end
+  def master(a, p) do
 
-    for _ <- 1..n do
+    # spawn a consumers
+    for _ <- 1..a do spawn(Consumer, :consume, [p, self(), self()]) end
+
+    for _ <- 1..a do
       receive do
         {:done, senderPid} -> say "master  : :done received from " <> Kernel.inspect(senderPid)
                         #  _ -> puts "Something else but :done came"
@@ -29,7 +30,5 @@ defmodule Master do
       end
     end
 
-    # terminate counter
-    Process.exit(counterPid, :kill)
   end
 end
