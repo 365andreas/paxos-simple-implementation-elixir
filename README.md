@@ -10,7 +10,7 @@ In order to build the project you must first run:
 ```./mix escript.build```
 
 In order to execute the program you must run:
-```./paxos a p```,
-where
-a : number of acceptors
-p : number of proposers
+```./paxos a p```, <br>
+where <br>
+&nbsp;&nbsp; a : number of acceptors <br>
+&nbsp;&nbsp;  p : number of proposers
