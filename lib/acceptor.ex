@@ -14,10 +14,11 @@ defmodule Acceptor do
         end
       {:propose, t, cmdNew, proposerPid} ->
         if t == tMax do
+          # acceptorSay "Sent 'ProposalSuccess' to #{Kernel.inspect(proposerPid)}"
           send(proposerPid, :proposalSuccess)
           serve(masterPid, tMax, cmdNew, t)
         end
-      {:execcute, cmdExec} ->
+      {:execute, cmdExec} ->
           acceptorSay "Received 'Execute #{cmdExec}'"
           send(masterPid, {:executed, cmdExec})
     end

@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Master do
+defmodule Mix.Tasks.Paxos do
 
   use Mix.Task
 

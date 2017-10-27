@@ -7,28 +7,32 @@ defmodule Master do
   end
 
   # function showing PID of process logging a message
-  def say(msg) do
-    puts "#{Kernel.inspect(self())} " <> msg
+  def masterSay(msg) do
+    puts "#{Kernel.inspect(self())} : master   : " <> msg
   end
 
   def acceptorSay(msg) do
     puts "#{Kernel.inspect(self())} : acceptor : " <> msg
   end
 
+  def proposerSay(msg) do
+    puts "#{Kernel.inspect(self())} : proposer : " <> msg
+  end
 
   def master(a, p) do
 
-    # spawn a consumers
-    for _ <- 1..a do spawn(Consumer, :consume, [p, self(), self()]) end
+    # spawn a acceptors
+    acceptorsPids = for _ <- 1..a, do: spawn(Acceptor, :serve, [self()])
+
+    # IO.puts "acceptorsPids: #{Kernel.inspect acceptorsPids}"
+
+    #spawn p proposers
+    for c <- 1..p, do: spawn(Proposer, :propose, [acceptorsPids, c])
 
     for _ <- 1..a do
       receive do
-        {:done, senderPid} -> say "master  : :done received from " <> Kernel.inspect(senderPid)
-                        #  _ -> puts "Something else but :done came"
-        after
-            180_000 -> say "master : Didn't receive all :done messages for 180s"
+        {:executed, _} -> nil
       end
     end
-
   end
 end
